@@ -1,12 +1,14 @@
 <?php 
 $app = MapasCulturais\App::i();
-$this->enqueueScript('app', 'aldirblanc', 'aldirblanc/app.js');
+$this->enqueueScript('app', 'streamlinedopportunity', 'streamlinedopportunity/app.js');
 
 $slug = $plugin->getSlug();
 $name = $plugin->getName();
 
+$slo_slug = $slo_instance->config['slug'];
+
 $files = $entity->getFiles($slug); 
-$url = $app->createUrl($slug, 'import', ['opportunity' => $entity->id]);
+$url = $app->createUrl($slug, 'import', ['opportunity' => $entity->id, 'slo_slug' => $slo_slug]);
 $template = '
 <li id="file-{{id}}" class="widget-list-item">
     <a href="{{url}}" rel="noopener noreferrer">{{description}}</a> 

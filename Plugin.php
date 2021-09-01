@@ -2,9 +2,8 @@
 
 namespace AppealValidator;
 
-require_once __DIR__."/../AbstractValidator/AbstractValidator.php";
+require_once __DIR__ . "/../AbstractValidator/AbstractValidator.php";
 
-use Exception;
 use MapasCulturais\i;
 use MapasCulturais\App;
 use MapasCulturais\Entities\Registration;
@@ -18,13 +17,13 @@ class Plugin extends \AbstractValidator\AbstractValidator
      */
     protected $sln_register;
 
-    /**
-     * @property-read StremLinedOpportunity $slo_instance instancia do StreamLinedOpportunity
-     */
-    protected $slo_instance;
-    
+    protected static $instance = null;
+
     function __construct(array $config = [])
     {
+
+        self::$instance =  $this;
+
         $config += [
             'consolidacao_requer_homologacao' => false,
             'consolidacao_requer_validacoes' => false,
@@ -35,70 +34,64 @@ class Plugin extends \AbstractValidator\AbstractValidator
             // se true, só exporta as inscrições 
             'exportador_requer_validacao' => [],
 
-            'result_homologada' => 'homologada',
-            'obs_homologada' => 'Recurso deferido',
-            
-            'result_analise' => 'recurso em análise',
-            'obs_analise' => 'Recurso recebido e em análise',
-            
-            'result_selecionada' => 'selecionada por recurso',
-            'obs_selecionada' => 'Recurso deferido',
-            
-            'result_invalida' => '2',
-            'obs_invalida' => 'Recurso negado',
-            
-            'result_nao_selecionada' => '3',
-            'obs_nao_selecionada' => 'Recurso indeferido',
-            
-            'result_suplente' => '8',
-            'obs_suplente' => 'Recurso: inscrição suplente',
-            
+            'result_homologada' => i::__('homologada'),
+            'obs_homologada' => i::__('Recurso deferido'),
+
+            'result_analise' => i::__('recurso em análise'),
+            'obs_analise' => i::__('Recurso recebido e em análise'),
+
+            'result_selecionada' => i::__('selecionada por recurso'),
+            'obs_selecionada' => i::__('Recurso deferido'),
+
+            'result_invalida' => i::__('2'),
+            'obs_invalida' => i::__('Recurso negado'),
+
+            'result_nao_selecionada' => i::__('3'),
+            'obs_nao_selecionada' => i::__('Recurso indeferido'),
+
+            'result_suplente' => i::__('8'),
+            'obs_suplente' => i::__('Recurso: inscrição suplente'),
+
         ];
-        
+
         $this->_config = $config;
 
         parent::__construct($config);
-        
-        // $app->controller($slug)->plugin = $this;
+
     }
 
     function _init()
     {
         $app = App::i();
-     
+
         $plugin = $this;
 
-         // Exibe botões para upload e download
-         $app->hook('template(opportunity.<<single|edit>>.sidebar-right):end', function () use($plugin) {
+        // Exibe botões para upload e download
+        $app->hook('template(opportunity.<<single|edit>>.sidebar-right):end', function () use ($plugin) {
             $opportunity = $this->controller->requestedEntity;
             $is_opportunity_managed_handler = $plugin->config['is_opportunity_managed_handler']($opportunity);
             $slo_instance = StreamlinedOpportunity::getInstanceByOpportunityId($opportunity->id);
 
-            if($is_opportunity_managed_handler && $opportunity->canUser('@control')){
+            if ($is_opportunity_managed_handler && $opportunity->canUser('@control')) {
                 $this->part('validador-recursos/validador-uploads', ['entity' => $opportunity, 'slo_instance' => $slo_instance, 'plugin' => $plugin]);
             }
         });
 
-         /**
+        /**
          * @TODO: implementar para metodo de avaliação documental
          */
-        $app->hook('entity(Registration).consolidateResult', function(&$result, $caller) use($plugin, $app) {
+        $app->hook('entity(Registration).consolidateResult', function (&$result, $caller) use ($plugin, $app) {
             if ($recurso = $app->repo('RegistrationEvaluation')->findOneBy(['registration' => $caller->registration, 'user' => $plugin->getUser()])) {
                 $result = $caller->result;
             }
         }, 100000);
 
         parent::_init();
-       
     }
 
     function register()
     {
         $app = App::i();
-        $slug = $this->getSlug();
-
-        // registra o controlador
-        $app->registerController($slug, $this->getControllerClassname());
 
         $this->registerOpportunityMetadata($this->prefix("processed_files"), [
             'label' => 'Arquivos do Validador Financeiro Processados',
@@ -128,12 +121,16 @@ class Plugin extends \AbstractValidator\AbstractValidator
             'default_value' => '{}'
         ]);
 
-        $file_group_definition = new \MapasCulturais\Definitions\FileGroup($this->getSlug(), ['^text/csv$'], 'O arquivo enviado não é um csv.',false,null,true);
+        $file_group_definition = new \MapasCulturais\Definitions\FileGroup($this->getSlug(), ['^text/csv$'], 'O arquivo enviado não é um csv.', false, null, true);
         $app->registerFileGroup('opportunity', $file_group_definition);
 
         parent::register();
+    }
 
-             
+
+    public static function getInstance()
+    {
+        return  self::$instance;
     }
 
     function getName(): string
@@ -156,7 +153,8 @@ class Plugin extends \AbstractValidator\AbstractValidator
         return true;
     }
 
-    function prefix($value){
-        return $this->getSlug()."_".$value;
+    function prefix($value)
+    {
+        return $this->getSlug() . "_" . $value;
     }
 }
