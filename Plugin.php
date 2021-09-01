@@ -140,7 +140,7 @@ class Plugin extends \AbstractValidator\AbstractValidator
 
     function getSlug(): string
     {
-        return "recurso";
+        return "validador_recurso";
     }
 
     function getControllerClassname(): string
