@@ -369,13 +369,11 @@ class Controller extends \MapasCulturais\Controllers\Registration
         // por causa do $app->em->clear(); não é possível mais utilizar a entidade para salvar
         $opportunity = $app->repo('Opportunity')->find($opportunity->id);
 
-        $slug = $plugin->getSlug();
-
         $opportunity->refresh();
         $opportunity->name = $opportunity->name . ' ';
-        $files = $opportunity->{$slug . '_processed_files'};
+        $files = $opportunity->{$plugin->prefix("processed_files")};
         $files->{basename($filename)} = date('d/m/Y \à\s H:i');
-        $opportunity->{$slug . '_processed_files'} = $files;
+        $opportunity->{$plugin->prefix("processed_files")} = $files;
         $opportunity->save(true);
         $this->finish('ok');
     }
