@@ -73,7 +73,7 @@ class Plugin extends \AbstractValidator\AbstractValidator
             
             if ($is_opportunity_managed_handler && $opportunity->canUser('@control')) {
                 $slo_instance = StreamlinedOpportunity::getInstanceByOpportunityId($opportunity->id);
-                $this->part('validador-recursos/validador-uploads', ['entity' => $opportunity, 'slo_instance' => $slo_instance, 'plugin' => $plugin]);
+                $this->part('appeal-validator/validador-uploads', ['entity' => $opportunity, 'slo_instance' => $slo_instance, 'plugin' => $plugin]);
             }
         });
 

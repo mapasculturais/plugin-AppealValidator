@@ -23,7 +23,7 @@ $template = '
     <h3 class="editando"><?= $name ?></h3>
     
     <div>
-        <?php $this->part('validador-recursos/csv-button', ['opportunity' => $entity->id, 'slo_instance' => $slo_instance, 'plugin' => $plugin]); ?>
+        <?php $this->part('appeal-validator/csv-button', ['opportunity' => $entity->id, 'slo_instance' => $slo_instance, 'plugin' => $plugin]); ?>
         <button class="btn btn-default add js-open-editbox hltip" data-target="#editbox-<?= $slug ?>-file" href="#" title="Clique para adicionar subir novo arquivo de recursos">Subir arquivo</button>
     </div>
     <div id="editbox-<?= $slug ?>-file" class="js-editbox mc-left" title="Subir arquivo de validação do <?= $name ?>" data-submit-label="Enviar">
