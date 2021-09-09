@@ -25,39 +25,39 @@ class Plugin extends \AbstractValidator\AbstractValidator
         self::$instance =  $this;
 
         $config += [
-            'consolidacao_requer_homologacao' => false,
-            'consolidacao_requer_validacoes' => false,
+            'consolidate_requires_homologation' => false,
+            'consolidate_requires_validations' => false,
 
             // se true, só exporta as inscrições pendentes que já tenham alguma avaliação
-            'exportador_requer_homologacao' => false,
+            'export_requires_homologation' => false,
 
             // se true, só exporta as inscrições 
-            'exportador_requer_validacao' => [],
+            'export_requires_validations' => [],
 
-            'result_homologada' => i::__('homologada'),
-            'obs_homologada' => i::__('Recurso deferido'),
-            'status_homologada' => Registration::STATUS_SENT,
+            'result_homologated' => i::__('homologada'),
+            'obs_homologated' => i::__('Recurso deferido'),
+            'status_homologated' => Registration::STATUS_SENT,
 
-            'result_analise' => i::__('recurso em análise'),
-            'obs_analise' => i::__('Recurso recebido e em análise'),
-            'status_analise' => false,
+            'result_analysis' => i::__('recurso em análise'),
+            'obs_analysis' => i::__('Recurso recebido e em análise'),
+            'status_analysis' => false,
 
-            'result_selecionada' => i::__('selecionada por recurso'),
-            'obs_selecionada' => i::__('Recurso deferido'),
-            'status_selecionada' => Registration::STATUS_APPROVED,
+            'result_selected' => i::__('selecionada por recurso'),
+            'obs_selected' => i::__('Recurso deferido'),
+            'status_selected' => Registration::STATUS_APPROVED,
 
 
-            'result_invalida' => i::__('2'),
-            'obs_invalida' => i::__('Recurso negado'),
-            'status_invalida' => Registration::STATUS_INVALID,
+            'result_invalid' => i::__('2'),
+            'obs_invalid' => i::__('Recurso negado'),
+            'status_invalid' => Registration::STATUS_INVALID,
 
-            'result_nao_selecionada' => i::__('3'),
-            'obs_nao_selecionada' => i::__('Recurso indeferido'),
-            'status_nao_selecionada' => Registration::STATUS_NOTAPPROVED,
+            'result_not_selected' => i::__('3'),
+            'obs_not_selected' => i::__('Recurso indeferido'),
+            'status_not_selected' => Registration::STATUS_NOTAPPROVED,
 
-            'result_suplente' => i::__('8'),
-            'obs_suplente' => i::__('Recurso: inscrição suplente'),
-            'status_suplete' => Registration::STATUS_WAITLIST
+            'result_substitute' => i::__('8'),
+            'obs_substitute' => i::__('Recurso: inscrição suplente'),
+            'status_substitute' => Registration::STATUS_WAITLIST
 
         ];
 
