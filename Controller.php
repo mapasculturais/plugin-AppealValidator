@@ -254,9 +254,9 @@ class Controller extends \MapasCulturais\Controllers\Registration
             switch (strtolower($eval)) {
                 case 'homologado':
                 case 'homologada':
-                    $result = $plugin->config['result_homologada'];
-                    $obs_padrao = 'Recurso deferido';
-                    $status = $plugin->config['status_homologada'];
+                    $result = $plugin->config['result_homologated'];
+                    $obs_padrao = $plugin->config['obs_homologated'];
+                    $status = $plugin->config['status_homologated'];
                     break;
 
                 case 'em analise':
@@ -265,9 +265,9 @@ class Controller extends \MapasCulturais\Controllers\Registration
                 case 'análise':
                 case 'recebido':
                 case 'recebida':
-                    $result = $plugin->config['result_analise'];
-                    $obs_padrao = 'Recurso recebido e em análise';
-                    $status = $plugin->config['status_analise'];
+                    $result = $plugin->config['result_analysis'];
+                    $obs_padrao = $plugin->config['obs_analysis'];
+                    $status = $plugin->config['status_analysis'];
                     break;
 
                 case 'deferido':
@@ -276,9 +276,9 @@ class Controller extends \MapasCulturais\Controllers\Registration
                 case 'aprovada':
                 case 'selecionado':
                 case 'selecionada':
-                    $result = $plugin->config['result_selecionada'];
-                    $obs_padrao = 'Recurso deferido';
-                    $status = $plugin->config['status_selecionada'];
+                    $result = $plugin->config['result_selected'];
+                    $obs_padrao = $plugin->config['obs_selected'];
+                    $status = $plugin->config['status_selected'];
                     break;
 
                 case 'negada':
@@ -287,9 +287,9 @@ class Controller extends \MapasCulturais\Controllers\Registration
                 case 'inválido':
                 case 'invalida':
                 case 'inválida':
-                    $result = $plugin->config['result_invalida'];
-                    $obs_padrao = 'Recurso negado';
-                    $status = $plugin->config['status_invalida'];
+                    $result = $plugin->config['result_invalid'];
+                    $obs_padrao = $plugin->config['obs_invalid'];
+                    $status = $plugin->config['status_invalid'];
                     break;
 
                 case 'indeferido':
@@ -298,15 +298,15 @@ class Controller extends \MapasCulturais\Controllers\Registration
                 case 'nao selecionado':
                 case 'não selecionada':
                 case 'nao selecionada':
-                    $result = $plugin->config['result_nao_selecionada'];
-                    $obs_padrao = 'Recurso indeferido';
-                    $status = $plugin->config['status_nao_selecionada'];
+                    $result = $plugin->config['result_not_selected'];
+                    $obs_padrao = $plugin->config['obs_not_selected'];
+                    $status = $plugin->config['status_not_selected'];
                     break;
 
                 case 'suplente':
-                    $result = $plugin->config['result_suplente'];
-                    $obs_padrao = 'Recurso: inscrição suplente';
-                    $status = $plugin->config['status_suplete'];
+                    $result = $plugin->config['result_substitute'];
+                    $obs_padrao = $plugin->config['obs_substitute'];
+                    $status = $plugin->config['status_substitute'];
                     break;
 
                 default:
