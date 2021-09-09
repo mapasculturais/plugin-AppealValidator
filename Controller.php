@@ -256,6 +256,7 @@ class Controller extends \MapasCulturais\Controllers\Registration
                 case 'homologada':
                     $result = $plugin->config['result_homologada'];
                     $obs_padrao = 'Recurso deferido';
+                    $status = $plugin->config['status_homologada'];
                     break;
 
                 case 'em analise':
@@ -266,6 +267,7 @@ class Controller extends \MapasCulturais\Controllers\Registration
                 case 'recebida':
                     $result = $plugin->config['result_analise'];
                     $obs_padrao = 'Recurso recebido e em análise';
+                    $status = $plugin->config['status_analise'];
                     break;
 
                 case 'deferido':
@@ -276,6 +278,7 @@ class Controller extends \MapasCulturais\Controllers\Registration
                 case 'selecionada':
                     $result = $plugin->config['result_selecionada'];
                     $obs_padrao = 'Recurso deferido';
+                    $status = $plugin->config['status_selecionada'];
                     break;
 
                 case 'negada':
@@ -286,6 +289,7 @@ class Controller extends \MapasCulturais\Controllers\Registration
                 case 'inválida':
                     $result = $plugin->config['result_invalida'];
                     $obs_padrao = 'Recurso negado';
+                    $status = $plugin->config['status_invalida'];
                     break;
 
                 case 'indeferido':
@@ -296,11 +300,13 @@ class Controller extends \MapasCulturais\Controllers\Registration
                 case 'nao selecionada':
                     $result = $plugin->config['result_nao_selecionada'];
                     $obs_padrao = 'Recurso indeferido';
+                    $status = $plugin->config['status_nao_selecionada'];
                     break;
 
                 case 'suplente':
                     $result = $plugin->config['result_suplente'];
                     $obs_padrao = 'Recurso: inscrição suplente';
+                    $status = $plugin->config['status_suplete'];
                     break;
 
                 default:
@@ -359,7 +365,7 @@ class Controller extends \MapasCulturais\Controllers\Registration
             $filenames = $registration->{$prop_filename};
             $filenames[] = $filename;
             $registration->{$prop_filename} = $filenames;
-
+            $registration->_setStatusTo($status);
             $registration->save(true);
             $app->em->clear();
         }

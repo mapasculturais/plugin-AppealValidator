@@ -36,21 +36,28 @@ class Plugin extends \AbstractValidator\AbstractValidator
 
             'result_homologada' => i::__('homologada'),
             'obs_homologada' => i::__('Recurso deferido'),
+            'status_homologada' => Registration::STATUS_SENT,
 
             'result_analise' => i::__('recurso em análise'),
             'obs_analise' => i::__('Recurso recebido e em análise'),
+            'status_analise' => false,
 
             'result_selecionada' => i::__('selecionada por recurso'),
             'obs_selecionada' => i::__('Recurso deferido'),
+            'status_selecionada' => Registration::STATUS_APPROVED,
+
 
             'result_invalida' => i::__('2'),
             'obs_invalida' => i::__('Recurso negado'),
+            'status_invalida' => Registration::STATUS_INVALID,
 
             'result_nao_selecionada' => i::__('3'),
             'obs_nao_selecionada' => i::__('Recurso indeferido'),
+            'status_nao_selecionada' => Registration::STATUS_NOTAPPROVED,
 
             'result_suplente' => i::__('8'),
             'obs_suplente' => i::__('Recurso: inscrição suplente'),
+            'status_suplete' => Registration::STATUS_WAITLIST
 
         ];
 
