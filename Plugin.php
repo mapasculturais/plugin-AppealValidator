@@ -4,6 +4,7 @@ namespace AppealValidator;
 
 require_once __DIR__ . "/../AbstractValidator/AbstractValidator.php";
 
+use Exception;
 use MapasCulturais\i;
 use MapasCulturais\App;
 use MapasCulturais\Entities\Registration;
@@ -21,12 +22,22 @@ class Plugin extends \AbstractValidator\AbstractValidator
 
     function __construct(array $config = [])
     {
+        
+        $slug = $config['slug'] ?? null;
 
-        self::$instance =  $this;
+        if (!$slug) {
+            throw new Exception(i::__('A chave de configuração "slug" é obrigatória no plugin para um validador de recurso'));
+        }
+
 
         $config += [
             'consolidate_requires_homologation' => false,
             'consolidate_requires_validations' => false,
+            'homologation_required_for_export' => [],
+            'required_validations_for_export' => [],
+
+            // Nome exibido na interface
+            'name' => "",
 
             // se true, só exporta as inscrições pendentes que já tenham alguma avaliação
             'export_requires_homologation' => false,
@@ -64,6 +75,8 @@ class Plugin extends \AbstractValidator\AbstractValidator
         $this->_config = $config;
 
         parent::__construct($config);
+
+        self::$instance[$config["slug"]] = $this;
 
     }
 
@@ -135,19 +148,19 @@ class Plugin extends \AbstractValidator\AbstractValidator
     }
 
 
-    public static function getInstance()
+    public static function getInstanceBySlug(string $slug)
     {
-        return  self::$instance;
+        return  self::$instance[$slug];
     }
 
     function getName(): string
     {
-        return 'Validador de Recursos';
+        return  $this->config['name'];
     }
 
     function getSlug(): string
     {
-        return "validador_recurso";
+        return $this->config['slug'];
     }
 
     function getControllerClassname(): string
