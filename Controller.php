@@ -2,15 +2,17 @@
 
 namespace AppealValidator;
 
+use DateTime;
+use MapasCulturais\i;
 use Exception;
 use League\Csv\Reader;
 use League\Csv\Writer;
 use MapasCulturais\App;
 use League\Csv\Statement;
 use MapasCulturais\Entities\Opportunity;
+use AppealValidator\Plugin as AppealValidator;
 use MapasCulturais\Entities\RegistrationEvaluation;
 use StreamlinedOpportunity\Plugin as StreamlinedOpportunity;
-use AppealValidator\Plugin as AppealValidator;
 
 /**
  * Registration Controller
@@ -33,13 +35,34 @@ class Controller extends \MapasCulturais\Controllers\Registration
     ];
 
     /**
+     * Retorna uma instância do controller
+     * @param string $controller_id 
+     * @return GenericValidator 
+     */
+    static public function i(string $controller_id): \MapasCulturais\Controller {
+        $instance = parent::i($controller_id);
+        $instance->init($controller_id);
+
+        return $instance;
+    }
+
+    protected function init($controller_id) {
+        if (!$this->_initiated) {
+            $this->plugin = AppealValidator::getInstanceBySlug($controller_id);
+            $this->config = $this->plugin->config;
+
+            $this->_initiated = true;
+        }
+    }
+
+    /**
      * @var Plugin
      */
     protected $plugin;
 
     public function setPlugin(Plugin $plugin)
     {
-        $this->plugin = AppealValidator::getInstance();
+        $this->plugin = AppealValidator::getInstanceBySlug($this->config['slug']);
 
         $app = App::i();
 
@@ -75,12 +98,13 @@ class Controller extends \MapasCulturais\Controllers\Registration
         foreach ($registrations as $i => $registration) {
             $csv_data[$i] = [
                 'NUMERO' => $registration->number,
-                'STATUS' => null,
+                'STATUS' => $registration->status,
                 'OBSERVACOES' => null,
             ];
         }
 
-        $validador = "recurso";
+        $plugin = AppealValidator::getInstanceBySlug($this->config['slug']);
+        $validador = $plugin->slug;
         $hash = md5(json_encode($csv_data));
 
         $dir = PRIVATE_FILES_PATH . $this->data['slo_slug'] . '/';
@@ -141,7 +165,7 @@ class Controller extends \MapasCulturais\Controllers\Registration
 
         $app = App::i();
 
-        $plugin = AppealValidator::getInstance();
+        $plugin = AppealValidator::getInstanceBySlug($this->config['slug']);
 
         $opportunity_id = $this->data['opportunity'] ?? 0;
         $file_id = $this->data['file'] ?? 0;
@@ -234,7 +258,7 @@ class Controller extends \MapasCulturais\Controllers\Registration
             }
         }
 
-        $plugin = AppealValidator::getInstance();
+        $plugin = AppealValidator::getInstanceBySlug($this->config['slug']);
 
         $user = $plugin->getUser();
 
