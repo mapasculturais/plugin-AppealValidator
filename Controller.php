@@ -129,6 +129,125 @@ class Controller extends \MapasCulturais\Controllers\Registration
         return $filename;
     }
 
+     /**
+     * Retrieve the registrations.
+     * @param Opportunity $opportunity
+     * @return Registration[]
+     */
+    protected function getRegistrations(Opportunity $opportunity)
+    {
+        $app = App::i();
+
+        $plugin = $this->plugin;
+
+        // registration status
+        $status = intval($this->data["status"] ?? 1);
+        $dql_params = [
+            "opportunity_id" => $opportunity->id,
+            "status" => $status,
+        ];
+        $from = $this->data["from"] ?? "";
+        $to = $this->data["to"] ?? "";
+        
+        if ($from && !DateTime::createFromFormat("Y-m-d", $from)) {
+            throw new \Exception(i::__("O formato do parâmetro `from` é inválido."));
+        }
+        if ($to && !DateTime::createFromFormat("Y-m-d", $to)) {
+            throw new \Exception(i::__("O formato do parâmetro `to` é inválido."));
+        }
+        $dql_from = "";
+
+      
+        if ($from) { // start date
+            $dql_params["from"] = (new DateTime($from))->format("Y-m-d 00:00");
+            $dql_from = "e.sentTimestamp >= :from AND";
+        }
+        $dql_to = "";
+        if ($to) { // end date
+            $dql_params["to"] = (new DateTime($to))->format("Y-m-d 00:00");
+            $dql_to = "e.sentTimestamp <= :to AND";
+        }
+        $dql = "
+            SELECT
+                e
+            FROM
+                MapasCulturais\Entities\Registration e
+            WHERE
+                $dql_to
+                $dql_from
+                e.status = :status AND
+                e.opportunity = :opportunity_id";
+        $query = $app->em->createQuery($dql);
+        $query->setParameters($dql_params);
+        $result = $query->getResult();
+
+        // exclude registrations that have not been homologated, or were previously validated, or are missing requirements
+        $registrations = [];
+        $repo = $app->repo("RegistrationEvaluation");
+        $validator_user = $plugin->user;
+      
+        foreach ($result as $registration) {
+            $evaluations = $repo->findBy([
+                "registration" => $registration,
+                "status" => 1
+            ]);
+            $eligible = true;
+            // previously validated registrations
+            foreach ($evaluations as $evaluation) {
+                if ($validator_user->equals($evaluation->user)) {
+                    $eligible = false;
+                    break;
+                }
+            }
+            if (!$eligible) {
+                continue;
+            }
+             // homologated registrations (depending on configuration)
+             /** @todo: handle other evaluation methods */
+            if ($this->config["homologation_required_for_export"]) {
+                $homologated = false;
+                // find a "selected" evaluation (result "10"), but keep an eye out for "non-selected" evaluations, these take priority
+                foreach ($evaluations as $evaluation) {
+                    if ($evaluation->user->validator_for) {
+                        continue;
+                    }
+                    if ($evaluation->result == "10") {
+                        $homologated = true;
+                    } else {
+                        $homologated = false;
+                        break;
+                    }
+                }
+                if (!$homologated) {
+                    $eligible = false;
+                }
+            }
+            if (!$eligible) {
+                continue;
+            }
+            // registrations meeting the configured validation requirements
+            /** @todo: handle other evaluation methods */
+            foreach ($this->config["required_validations_for_export"] as $slug) {
+                $validated = false;
+                foreach ($evaluations as $evaluation) {
+                    if (($evaluation->user->validator_for == $slug) && ($evaluation->result == "10")) {
+                        $validated = true;
+                        break;
+                    }
+                }
+                if (!$validated) {
+                    $eligible = false;
+                    break;
+                }
+            }
+            if ($eligible) {
+                $registrations[] = $registration;
+            }
+        }
+        $app->applyHookBoundTo($this, "validator({$plugin->slug}).registrations", [&$registrations, $opportunity]);
+        return $registrations;
+    }
+
     /**
      * Exportador 
      *
@@ -151,7 +270,9 @@ class Controller extends \MapasCulturais\Controllers\Registration
 
         $this->exportInit($opportunity);
 
-        $filename = $this->generateCSV([]);
+        $registrations = $this->getRegistrations($opportunity);      
+
+        $filename = $this->generateCSV($registrations);
 
         header('Content-Type: application/csv');
         header('Content-Disposition: attachment; filename=' . basename($filename));
