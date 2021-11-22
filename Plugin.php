@@ -45,28 +45,28 @@ class Plugin extends \AbstractValidator\AbstractValidator
             // se true, só exporta as inscrições 
             'export_requires_validations' => [],
 
-            'result_homologated' => i::__('homologada'),
+            'result_homologated' => i::__('Homologada por recurso'),
             'obs_homologated' => i::__('Recurso deferido'),
             'status_homologated' => Registration::STATUS_SENT,
 
-            'result_analysis' => i::__('recurso em análise'),
+            'result_analysis' => i::__('Recurso em análise'),
             'obs_analysis' => i::__('Recurso recebido e em análise'),
-            'status_analysis' => false,
+            'status_analysis' => Registration::STATUS_SENT,
 
-            'result_selected' => i::__('selecionada por recurso'),
+            'result_selected' => i::__('Selecionada por recurso'),
             'obs_selected' => i::__('Recurso deferido'),
             'status_selected' => Registration::STATUS_APPROVED,
 
 
-            'result_invalid' => i::__('2'),
+            'result_invalid' => i::__('Recurso negado'),
             'obs_invalid' => i::__('Recurso negado'),
             'status_invalid' => Registration::STATUS_INVALID,
 
-            'result_not_selected' => i::__('3'),
+            'result_not_selected' => i::__('Recurso indeferido'),
             'obs_not_selected' => i::__('Recurso indeferido'),
             'status_not_selected' => Registration::STATUS_NOTAPPROVED,
 
-            'result_substitute' => i::__('8'),
+            'result_substitute' => i::__('Recurso em suplência'),
             'obs_substitute' => i::__('Recurso: inscrição suplente'),
             'status_substitute' => Registration::STATUS_WAITLIST
 
