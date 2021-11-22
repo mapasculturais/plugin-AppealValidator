@@ -512,6 +512,9 @@ class Controller extends \MapasCulturais\Controllers\Registration
             $registration->{$prop_filename} = $filenames;
             $registration->_setStatusTo($status);
             $registration->save(true);
+
+            $app->applyHookBoundTo($this, 'process.appealvalidator', [$registration]);
+            
             $app->em->clear();
         }
 
