@@ -466,7 +466,7 @@ class Controller extends \MapasCulturais\Controllers\Registration
             $prop_raw = $plugin->prefix("raw");
             $prop_filename = $plugin->prefix("filename");
 
-            $registration = $app->repo('Registration')->findOneBy(['number' => $num]);
+            $registration = $app->repo('Registration')->findOneBy(['number' => $num, 'opportunity' => $opportunity]);
 
 
             $count++;
